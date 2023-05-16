@@ -1,0 +1,10 @@
+Package: asterisk
+Version: ${VERSION}
+Architecture: amd64
+Maintainer: Yaroslav Napadailo <napadailo@skynapp.com>
+Depends: sox, lame, sngrep, libxml2, libxslt1.1, libsqlite3-0, libssl1.1, liburiparser1, libedit2, curl, libsrtp2-1, libcap2
+Section: devel
+Priority: optional
+Homepage: https://asterisk.org
+Description: Asterisk is a free and open source framework for
+ building communications applications and is sponsored by Digium.
