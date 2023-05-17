@@ -1,7 +1,8 @@
-FROM debian:latest AS compile
+FROM ubuntu:latest AS compile
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV VERSION=18.8.0
+ARG VERSION=18.8.0
+ENV VERSION ${VERSION}
 
 RUN apt update && \
     apt install -y wget \
@@ -31,10 +32,11 @@ RUN make DESTDIR=/opt/build install-logrotate
 WORKDIR /opt
 RUN rm -fr /opt/source /opt/asterisk.tar.gz
 
-FROM debian:latest as build
+FROM ubuntu:latest as build
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV VERSION=18.8.0
+ARG VERSION=18.8.0
+ENV VERSION ${VERSION}
 
 COPY --from=compile /opt/build /opt/build
 
@@ -54,13 +56,18 @@ RUN fakeroot dpkg-deb -b /opt/build /opt/asterisk.deb
 
 RUN rm -rf /opt/build
 
-FROM debian:latest
+FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=build /opt/asterisk.deb /tmp/
 RUN apt update && \
-    apt install -y /tmp/asterisk.deb
+    apt install -y /tmp/asterisk.deb \
+    lua5.2 \
+    liblua5.2-dev \
+    lua-sql-mysql \
+    unixodbc
 
+EXPOSE 5060/udp
 ENTRYPOINT ["/usr/sbin/asterisk"]
 CMD ["-c", "-vvvv", "-g"]
