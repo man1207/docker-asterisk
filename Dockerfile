@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS compile
+FROM ubuntu:20.04 AS compile
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG VERSION=18.8.0
@@ -20,8 +20,8 @@ RUN ./contrib/scripts/install_prereq install
 RUN ./contrib/scripts/get_mp3_source.sh
 RUN ./configure --with-pjproject-bundled --with-jansson-bundled
 
-COPY menuselect.makeopts menuselect.makeopts
-COPY menuselect.makedeps menuselect.makedeps
+COPY menuselect/menuselect.makeopts menuselect.makeopts
+COPY menuselect/menuselect.makedeps menuselect.makedeps
 
 RUN make
 RUN make DESTDIR=/opt/build install
@@ -32,7 +32,7 @@ RUN make DESTDIR=/opt/build install-logrotate
 WORKDIR /opt
 RUN rm -fr /opt/source /opt/asterisk.tar.gz
 
-FROM ubuntu:latest as build
+FROM ubuntu:20.04 as build
 
 ENV DEBIAN_FRONTEND=noninteractive
 ARG VERSION=18.8.0
@@ -46,17 +46,17 @@ RUN apt update && \
 
 WORKDIR /opt
 RUN mkdir -p /opt/build/DEBIAN
-COPY postinstall /opt/build/DEBIAN/postinst
+COPY DEBIAN/postinstall /opt/build/DEBIAN/postinst
 RUN chmod +x /opt/build/DEBIAN/postinst
 
-COPY control control
+COPY DEBIAN/control control
 RUN envsubst < /opt/control > /opt/build/DEBIAN/control
 
 RUN fakeroot dpkg-deb -b /opt/build /opt/asterisk.deb
 
 RUN rm -rf /opt/build
 
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
