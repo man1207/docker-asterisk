@@ -18,7 +18,7 @@ RUN tar -zxf asterisk.tar.gz --strip 1
 
 RUN ./contrib/scripts/install_prereq install
 RUN ./contrib/scripts/get_mp3_source.sh
-RUN ./configure --with-pjproject-bundled --with-jansson-bundled
+RUN ./configure --with-pjproject-bundled --with-jansson-bundled --disable-optimizations
 
 COPY menuselect/menuselect.makeopts menuselect.makeopts
 COPY menuselect/menuselect.makedeps menuselect.makedeps
